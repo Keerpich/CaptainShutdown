@@ -7,12 +7,16 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QCloseEvent>
+#include <QProcess>
+
+#include <stdio.h>
 //#include <unistd.h>
 
 #include "setpassword.h"
 #include "askpassword.h"
 #include "addnote.h"
 #include "note.h"
+#include "getlinuxpass.h"
 
 namespace Ui {
 class MainWindow;
@@ -81,7 +85,10 @@ private:
     void ClearAndAdd (QLineEdit *lineEdit, QString &text) ;
     void displayLcd() ;
 
+    void reqLnxPass() ;
     bool reqPassword() ;
+    void passSetup();
+    void passSet() ;
 
     void createActions() ;
     void createTrayIcon () ;
@@ -94,9 +101,11 @@ private:
     QMenu *trayIconMenu ;
 
     QAction *open ;
+    QAction *exit ;
 
     QString setPassword ;
     QString toCheckPass ;
+    QString linuxPass ;
 
     std::string strTimer ;
 

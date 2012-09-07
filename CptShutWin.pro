@@ -17,17 +17,20 @@ SOURCES += main.cpp\
     askpassword.cpp \
     note.cpp \
     addnote.cpp \
-    focuslineedit.cpp
+    focuslineedit.cpp \
+    getlinuxpass.cpp
 
 HEADERS  += mainwindow.h \
     setpassword.h \
     askpassword.h \
     note.h \
     addnote.h \
-    focuslineedit.h
+    focuslineedit.h \
+    getlinuxpass.h
 
 FORMS    += \
     mainwindow.ui \
     setpassword.ui \
     askpassword.ui \
-    addnote.ui
+    addnote.ui \
+    getlinuxpass.ui

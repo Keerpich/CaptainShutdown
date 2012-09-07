@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     trayIcon->show();
 
+    linuxPass = QString() ;
+
     iSeconds = 0 ;
     iMinutes = 0 ;
     iHours = 0 ;
@@ -154,23 +156,54 @@ void MainWindow::on_okButton_clicked()
 {
     if (setPassword.isEmpty())
     {
-        iSeconds = iShowedSeconds ;
-        iMinutes = iShowedMinutes ;
-        iHours = iShowedHours ;
-
-        bSdEnabled = true ;
+        passSet() ;
     }
     else
     {
         if (reqPassword())
         {
-            iSeconds = iShowedSeconds ;
-            iMinutes = iShowedMinutes ;
-            iHours = iShowedHours ;
-
-            bSdEnabled = true ;
+            passSet() ;
         }
     }
+}
+
+void MainWindow::passSet()
+{
+    if (*OS == "Windows")
+        passSetup();
+
+    else if (*OS == "Linux")
+    {
+        //modify to ask for user password
+        reqLnxPass();
+        if (linuxPass.isNull()) QMessageBox::warning (this, tr("Warning"),
+                                                     tr("Linux password was not set"), QMessageBox::Ok);
+        else
+            passSetup();
+    }
+    else
+    {
+        QMessageBox::critical (this, tr("Error"),
+                               tr("OS not supoorted"), QMessageBox::Ok) ;
+        bSdEnabled = false ;
+        qApp->quit();
+    }
+}
+
+void MainWindow::reqLnxPass()
+{
+    getLinuxPass *askPas = new getLinuxPass (this, &linuxPass) ;
+
+    askPas->exec();
+}
+
+void MainWindow::passSetup()
+{
+    iSeconds = iShowedSeconds ;
+    iMinutes = iShowedMinutes ;
+    iHours = iShowedHours ;
+
+    bSdEnabled = true ;
 }
 
 void MainWindow::updateTime()
@@ -180,9 +213,19 @@ void MainWindow::updateTime()
         if (iHours == 0 && iMinutes == 0 && iSeconds == 0)
         {
             if (*OS == "Windows")
+            {
                 system ("shutdown -s -f -t 0") ;
- //           else if (*OS == "Linux")
- //               execl("/usr/bin/sudo", "/sbin/shutdown", "-t", "now", (char*)NULL);
+                bSdEnabled = false ;
+            }
+            else if (*OS == "Linux")
+            {
+                QString strCommand ;
+                strCommand = "echo " + linuxPass + " | sudo -S shutdown -P now" ;
+                system (strCommand.toStdString().c_str());
+                bSdEnabled = false ;
+                linuxPass = QString() ;
+
+            }
             else
                 {
                     QMessageBox::critical (this, tr("Error"),
@@ -243,7 +286,8 @@ std::string MainWindow::IntToString(int IntValue)
     MyBuff = new char[100] ;
 
     memset (MyBuff, '\0', 100) ;
-    itoa (IntValue, MyBuff, 10) ;
+    snprintf(MyBuff, sizeof(MyBuff), "%d", IntValue);
+    //itoa (IntValue, MyBuff, 10) ;
 
     strRetVal = MyBuff ;
 
@@ -291,13 +335,13 @@ void MainWindow::on_resetAction_triggered()
 void MainWindow::on_aboutCptAction_triggered()
 {
     QMessageBox::about(this, tr("About Captain Shutdown"),
-                       tr("<h2>Captain Shutdown 2.5</h2>"
+                       tr("<h2>Captain Shutdown 2.6</h2>"
                        "<p>Created by Radu Daniel Alexandru"
                        "<p>danyhk94@gmail.com"
                         "<p><a href = http://tinyprojectz.blogspot.com>My Blog</a>"
                        "<p>Captain Shutdown is a free application "
                        "that allows time scheduling of computer shutdown. "
-                       "Currently, it only works for Windows ."
+                       "Currently, it works for Windows and Linux."
                           "<p><a href = http://www.softpedia.com/progClean/Captain-Shutdown-Clean-217944.html>Softpedia 100% Clean Award</a>")) ;
 }
 
@@ -375,6 +419,9 @@ void MainWindow::on_removePAction_triggered()
     if (reqPassword())
     {
         setPassword.clear();
+        ui->setPAction->setEnabled(true) ;
+        ui->editPAction->setEnabled(false) ;
+        ui->removePAction->setEnabled(false) ;
     }
 }
 
@@ -410,8 +457,11 @@ void MainWindow::toQuit()
 
 void MainWindow::createActions()
 {
-    open = new QAction (tr("O&pen"), this) ;
+    open = new QAction (tr("&Show"), this) ;
     connect (open, SIGNAL (triggered()), this , SLOT (show())) ;
+
+    exit = new QAction (tr("&Exit"), this) ;
+    connect (exit, SIGNAL (triggered()), this, SLOT (toQuit())) ;
 }
 
 void MainWindow ::createTrayIcon()
@@ -419,6 +469,7 @@ void MainWindow ::createTrayIcon()
     trayIconMenu = new QMenu(this) ;
 
     trayIconMenu->addAction(open) ;
+    trayIconMenu->addAction(exit) ;
 
     trayIcon = new QSystemTrayIcon(this) ;
     trayIcon->setContextMenu(trayIconMenu) ;

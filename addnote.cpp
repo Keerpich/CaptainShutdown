@@ -196,7 +196,8 @@ std::string AddNote::IntToString(int IntValue)
     MyBuff = new char[100] ;
 
     memset (MyBuff, '\0', 100) ;
-    itoa (IntValue, MyBuff, 10) ;
+    snprintf(MyBuff, sizeof(MyBuff), "%d", IntValue);
+    //itoa (IntValue, MyBuff, 10) ;
 
     strRetVal = MyBuff ;
 
