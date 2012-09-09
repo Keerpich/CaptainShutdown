@@ -1,0 +1,22 @@
+/****CAPTAIN SHUTDOWN TODO LIST****/
+
+Add options :
+	-shutdown (done)
+	-restart
+	-logout
+
+Add timer options :
+	-shutdown at a specific time on a specific date
+
+Add Notes (done)
+
+Add sound:
+	-play sound at a specific time (like Note)
+	-play sound when a specific Note appears
+
+Networking
+	-make remote shutdown available only when password is set
+	-remote shutdown with password
+
+Maintenance:
+	-remove duplicate code
