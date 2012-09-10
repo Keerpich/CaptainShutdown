@@ -20,3 +20,6 @@ Networking
 
 Maintenance:
 	-remove duplicate code
+
+BUGFIX:
+	-Exit in system tray
