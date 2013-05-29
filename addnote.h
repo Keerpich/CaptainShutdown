@@ -1,7 +1,7 @@
 #ifndef ADDNOTE_H
 #define ADDNOTE_H
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <QLineEdit>
 #include <QtGui>
 
@@ -9,6 +9,7 @@
 #include <string>
 
 #include "note.h"
+#include "dateandtime.h"
 
 class Note ;
 
@@ -27,6 +28,7 @@ public:
 private:
     Ui::AddNote *ui;
     Note newNote ;
+    QDateTime noteDate;
 
     std::map<std::string, Note> *vNote;
 
@@ -42,7 +44,7 @@ private slots:
     void on_windowCheckBox_stateChanged () ;
 
     void on_titleLineEdit_editingFinished () ;
-    void on_detailsTextEdit_textChanged () ;
+    void on_detailsTextEdit_editingFinished () ;
 
     void on_hLineEdit_editingFinished () ;
     void on_mLineEdit_editingFinished () ;
@@ -62,6 +64,8 @@ private slots:
 
     void on_deleteButton_clicked() ;
 
+    void on_dateButton_clicked();
+    void on_clearButton_clicked();
 };
 
 #endif // ADDNOTE_H

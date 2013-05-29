@@ -5,55 +5,36 @@ Note::Note (QWidget *parent2) :
 {
 }
 
-bool Note::checkAgainstTime(const int H, const int M, const int S)
+bool Note::checkAgainstTime(const QDateTime checker)
 {
-    return (H == iHours && M == iMinutes && S == iSeconds) ;
+    return (!(QDateTime::currentDateTime().addSecs(toAdd) < checker)) ;
 }
 
 bool Note::elapseTime()
 {
-    if (iSeconds == 0 && iMinutes == 0 && iHours == 0)
-    {
-        return true ;
-    }
-    else if (iSeconds == 0)
-    {
-        if (iMinutes == 0)
-        {
-            iHours-- ;
-            iMinutes = 59 ;
-            iSeconds = 60 ;
-        }
-        else
-        {
-            iMinutes-- ;
-            iSeconds = 60 ;
-        }
-    }
 
-    iSeconds-- ;
+    if (!(time > QDateTime::currentDateTime()))
+        return true;
 
-    return false ;
+    return false;
 }
 
-const int Note::getMode()
+
+int Note::getMode() const
 {
     return iMode ;
 }
 
-void Note::setH(int H)
+
+void Note::setTime(QDateTime tocop)
 {
-    iHours = H ;
+    time = tocop ;
 }
 
-void Note::setM(int M)
+void Note::setTime(int hour,int min, int sec)
 {
-    iMinutes = M ;
-}
-
-void Note::setS(int S)
-{
-    iSeconds = S ;
+    time = QDateTime::currentDateTime().addSecs(hour + min + sec);
+    toAdd = hour + min + sec;
 }
 
 void Note::setMode(int Mo)
@@ -78,11 +59,11 @@ void Note::displayNote()
                                 QMessageBox::Ok) ;
 }
 
-bool Note::timeExpired(int H, int M, int S)
+bool Note::timeExpired(QDateTime tmp)
 {
     if (iMode == BEFORE_SHUT)
     {
-        if (checkAgainstTime(H, M, S))
+        if (checkAgainstTime(tmp))
         {
             return true ;
         }
@@ -98,19 +79,10 @@ bool Note::timeExpired(int H, int M, int S)
     return false ;
 }
 
-const int Note::getH()
-{
-    return iHours ;
-}
 
-const int Note::getM()
+const QDateTime Note::getTime()
 {
-    return iMinutes ;
-}
-
-const int Note::getS()
-{
-    return iSeconds ;
+    return time;
 }
 
 const QString Note::getDetails()
@@ -125,9 +97,7 @@ const QString Note::getTitle()
 
 Note Note::operator =(Note &other)
 {
-    this->setH(other.getH()) ;
-    this->setM(other.getM()) ;
-    this->setS(other.getS()) ;
+    this->setTime(other.getTime());
     this->setMode(other.getMode()) ;
     this->setTitle(other.getTitle()) ;
     this->setDetails(other.getDetails()) ;
@@ -137,12 +107,12 @@ Note Note::operator =(Note &other)
     return *this ;
 }
 
-const bool Note::getTrayDisplay()
+bool Note::getTrayDisplay() const
 {
     return bTrayDisplay ;
 }
 
-const bool Note::getWindowDisplay()
+bool Note::getWindowDisplay() const
 {
     return bWindowDisplay ;
 }

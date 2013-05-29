@@ -4,12 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui widgets multimedia
 
 TARGET = CptShutWin
 TEMPLATE = app
 win32:RC_FILE += myapp.rc
-
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -18,7 +17,8 @@ SOURCES += main.cpp\
     note.cpp \
     addnote.cpp \
     focuslineedit.cpp \
-    getlinuxpass.cpp
+    getlinuxpass.cpp \
+    dateandtime.cpp
 
 HEADERS  += mainwindow.h \
     setpassword.h \
@@ -26,11 +26,13 @@ HEADERS  += mainwindow.h \
     note.h \
     addnote.h \
     focuslineedit.h \
-    getlinuxpass.h
+    getlinuxpass.h \
+    dateandtime.h
 
 FORMS    += \
     mainwindow.ui \
     setpassword.ui \
     askpassword.ui \
     addnote.ui \
-    getlinuxpass.ui
+    getlinuxpass.ui \
+    dateandtime.ui

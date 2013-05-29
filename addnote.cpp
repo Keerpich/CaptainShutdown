@@ -1,6 +1,11 @@
 #include "addnote.h"
 #include "ui_addnote.h"
 
+#include <fstream>
+
+using namespace std;
+
+
 AddNote::AddNote(QWidget *parent, std::map<std::string, Note> *nNote,int sdState) :
     QDialog(parent),
     ui(new Ui::AddNote),
@@ -8,11 +13,15 @@ AddNote::AddNote(QWidget *parent, std::map<std::string, Note> *nNote,int sdState
 {
     ui->setupUi(this);
 
+    noteDate.setTime_t(0);
+
+
+
     ui->beforeSdRadio->setEnabled(sdState) ;
 
-    newNote.setH(0);
-    newNote.setM(0);
-    newNote.setS(0);
+    ui->hLineEdit->setText("0");
+    ui->mLineEdit->setText("0");
+    ui->sLineEdit->setText("0");
 
     newNote.setMode(AT_TIME) ;
 
@@ -22,15 +31,16 @@ AddNote::AddNote(QWidget *parent, std::map<std::string, Note> *nNote,int sdState
 
 AddNote::~AddNote()
 {
+
     vNote = NULL ;
     delete ui;
 }
 
 void AddNote::enableOK()
 {
-    if (ui->hLineEdit->text().isEmpty()
+    if (((noteDate.toTime_t() == 0) && (ui->hLineEdit->text().isEmpty()
             || ui->mLineEdit->text().isEmpty()
-            || ui->sLineEdit->text().isEmpty()
+            || ui->sLineEdit->text().isEmpty()))
             || ui->titleLineEdit->text().isEmpty()
             || (ui->trayCheckBox->isChecked() == false && ui->windowCheckBox->isChecked() == false))
         ui->okButton->setEnabled(false) ;
@@ -40,45 +50,19 @@ void AddNote::enableOK()
 
 void AddNote::on_hLineEdit_editingFinished()
 {
-    newNote.setH(atoi(ui->hLineEdit->text().toStdString().c_str()));
-    enableOK() ;
+    enableOK();
 }
 
 void AddNote::on_mLineEdit_editingFinished()
 {
-    if (GetIntVal(ui->mLineEdit->text().toStdString()) >= 60)
-    {
-        newNote.setH(newNote.getH() + GetIntVal(ui->mLineEdit->text().toStdString()) / 60) ;
-        ui->hLineEdit->setText(QString::fromUtf8(IntToString(newNote.getH()).c_str())) ;
-    }
-
-    newNote.setM(atoi(ui->mLineEdit->text().toStdString().c_str()) % 60) ;
-    ui->mLineEdit->setText(QString::fromUtf8(IntToString(newNote.getM()).c_str())) ;
-
-    enableOK () ;
+    AddNote::enableOK();
 }
 void AddNote::on_sLineEdit_editingFinished()
 {
-    if (GetIntVal(ui->sLineEdit->text().toStdString()) >= 60)
-    {
-        newNote.setM(newNote.getM() + GetIntVal(ui->sLineEdit->text().toStdString()) / 60) ;
-        ui->mLineEdit->setText(QString::fromUtf8(IntToString(newNote.getM()).c_str())) ;
-
-        if (GetIntVal(ui->mLineEdit->text().toStdString()) >= 60)
-        {
-            newNote.setH(newNote.getH() + GetIntVal(ui->mLineEdit->text().toStdString()) / 60) ;
-            ui->hLineEdit->setText(QString::fromUtf8(IntToString(newNote.getH()).c_str())) ;
-
-            newNote.setM(atoi(ui->mLineEdit->text().toStdString().c_str()) % 60) ;
-            ui->mLineEdit->setText(QString::fromUtf8(IntToString(newNote.getM()).c_str())) ;
-        }
-    }
-
-    newNote.setS(atoi(ui->sLineEdit->text().toStdString().c_str()) % 60) ;
-    ui->sLineEdit->setText(QString::fromUtf8(IntToString(newNote.getS()).c_str())) ;
-
-    enableOK () ;
+    AddNote::enableOK();
 }
+
+
 void AddNote::on_titleLineEdit_editingFinished()
 {
     if (ui->titleLineEdit->text() == "New" || nameInNotes(ui->titleLineEdit->text()))
@@ -94,7 +78,7 @@ void AddNote::on_titleLineEdit_editingFinished()
         enableOK() ;
     }
 }
-void AddNote::on_detailsTextEdit_textChanged()
+void AddNote::on_detailsTextEdit_editingFinished()
 {
     newNote.setDetails(ui->detailsTextEdit->toPlainText());
 }
@@ -106,12 +90,26 @@ void AddNote::on_closeButton_clicked()
 
 void AddNote::on_okButton_clicked()
 {
+    if(noteDate.toTime_t() == 0)
+    {
+        newNote.setTime((ui->hLineEdit->text().toInt()) * 3600,
+                        ui->mLineEdit->text().toInt() * 60,
+                        ui->sLineEdit->text().toInt()) ;
+
+    }
+
+    else
+    {
+        newNote.setTime(noteDate);
+    }
+
     if (ui->comboBox->currentText() == "New")
         vNote->insert( make_pair(newNote.getTitle().toStdString(), newNote) ) ;
     else
     {
         vNote->find(ui->comboBox->currentText().toStdString())->second = newNote ;
     }
+
     close () ;
 }
 
@@ -138,9 +136,9 @@ void AddNote::on_comboBox_currentIndexChanged(const QString &textBox)
         ui->titleLineEdit->setReadOnly (false) ;
         ui->titleLineEdit->clear();
         ui->detailsTextEdit->clear();
-        ui->hLineEdit->setText(QString::fromUtf8(IntToString(newNote.getH()).c_str())) ;
-        ui->mLineEdit->setText(QString::fromUtf8(IntToString(newNote.getM()).c_str())) ;
-        ui->sLineEdit->setText(QString::fromUtf8(IntToString(newNote.getS()).c_str())) ;
+        ui->hLineEdit->clear();
+        ui->mLineEdit->clear();
+        ui->sLineEdit->clear();
         ui->deleteButton->setEnabled(false) ;
         ui->okButton->setText(tr("Add")) ;
     }
@@ -151,11 +149,13 @@ void AddNote::on_comboBox_currentIndexChanged(const QString &textBox)
 
         ui->titleLineEdit->setText(newNote.getTitle()) ;
         ui->detailsTextEdit->setText(newNote.getDetails()) ;
-        ui->hLineEdit->setText(QString::fromUtf8(IntToString(newNote.getH()).c_str())) ;
-        ui->mLineEdit->setText(QString::fromUtf8(IntToString(newNote.getM()).c_str())) ;
-        ui->sLineEdit->setText(QString::fromUtf8(IntToString(newNote.getS()).c_str())) ;
+        ui->hLineEdit->setText(QString::number(QDateTime::currentDateTime().secsTo(noteDate) / 3600)) ;
+        ui->mLineEdit->setText(QString::number((QDateTime::currentDateTime().secsTo(noteDate) / 60) % 60)) ;
+        ui->sLineEdit->setText(QString::number((QDateTime::currentDateTime().secsTo(noteDate) % 60))) ;
         ui->beforeSdRadio->setChecked(newNote.getMode() == BEFORE_SHUT) ;
         ui->fromSetRadio->setChecked(newNote.getMode() == AT_TIME) ;
+
+
 
         ui->deleteButton->setEnabled(true) ;
         ui->okButton->setText(tr("Edit")) ;
@@ -223,7 +223,6 @@ void AddNote::on_sLineEdit_focussed(bool focus)
         if (ui->sLineEdit->text().isEmpty())
         {
             ui->sLineEdit->setText(QString::fromUtf8("0")) ;
-            newNote.setS(0) ;
         }
 }
 
@@ -235,7 +234,6 @@ void AddNote::on_mLineEdit_focussed(bool focus)
         if (ui->mLineEdit->text().isEmpty())
         {
             ui->mLineEdit->setText(QString::fromUtf8("0")) ;
-            newNote.setM(0) ;
         }
 }
 
@@ -247,7 +245,6 @@ void AddNote::on_hLineEdit_focussed(bool focus)
         if (ui->hLineEdit->text().isEmpty())
         {
             ui->hLineEdit->setText(QString::fromUtf8("0")) ;
-            newNote.setH(0) ;
         }
 }
 
@@ -275,4 +272,35 @@ bool AddNote::nameInNotes(QString qstrText)
     }
 
     return false ;
+}
+
+void AddNote::on_dateButton_clicked()
+{
+    DateAndTime* date = new DateAndTime(this, &noteDate);
+    date->show();
+
+    if(noteDate.toTime_t() != 0)
+    {
+        ui->hLineEdit->setReadOnly(true);
+        ui->mLineEdit->setReadOnly(true);
+        ui->sLineEdit->setReadOnly(true);
+
+        ui->beforeSdRadio->setDisabled(true);
+        on_fromSetRadio_clicked();
+
+    }
+
+    else
+    {
+        ui->hLineEdit->setReadOnly(false);
+        ui->mLineEdit->setReadOnly(false);
+        ui->sLineEdit->setReadOnly(false);
+
+    }
+}
+
+void AddNote::on_clearButton_clicked()
+{
+    noteDate.setTime_t(0);
+    ui->beforeSdRadio->setDisabled(false);
 }

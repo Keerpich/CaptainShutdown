@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>361</width>
-      <height>61</height>
+      <width>365</width>
+      <height>66</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -204,8 +204,14 @@
      <x>0</x>
      <y>0</y>
      <width>386</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
    </property>
    <widget class="QMenu" name="menuCaptain_Shutdown">
     <property name="title">
@@ -214,6 +220,7 @@
     <addaction name="resetAction"/>
     <addaction name="separator"/>
     <addaction name="exitAction"/>
+    <addaction name="taskManagerAction"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="tearOffEnabled">
@@ -359,6 +366,20 @@
   <action name="editNoteAction">
    <property name="text">
     <string>Edit/Remove Note</string>
+   </property>
+  </action>
+  <action name="taskManagerAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Task Manager Disabled</string>
+   </property>
+   <property name="shortcut">
+    <string>T</string>
    </property>
   </action>
  </widget>

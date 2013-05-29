@@ -1,34 +1,38 @@
 #include "mainwindow.h"
-
 #include "ui_mainwindow.h"
 
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
 QString *OS=new QString("Linux");
 #endif
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 QString *OS=new QString("Windows");
-#endif
-#ifdef Q_WS_MACX
-QString *OS=new QString("Mac");
+#include <windows.h>
 #endif
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {    
+
+
     ui->setupUi(this);
 
     createActions();
     createTrayIcon () ;
     setIcon();
 
+    ui->menubar->setVisible(true);
+
+    if(*OS == "Windows")
+    {
+        ui->taskManagerAction->setEnabled(true);
+    }
+
     trayIcon->show();
 
     linuxPass = QString() ;
 
-    iSeconds = 0 ;
-    iMinutes = 0 ;
-    iHours = 0 ;
+    time = QDateTime::currentDateTime();
 
     bSdEnabled = false ;
 
@@ -119,9 +123,8 @@ void MainWindow::on_abButton_clicked()
 {
     if (setPassword.isEmpty())
     {
-        iHours = 0 ;
-        iMinutes = 0 ;
-        iSeconds = 0 ;
+
+        time = QDateTime::currentDateTime();
 
         bSdEnabled = false ;
 
@@ -129,9 +132,8 @@ void MainWindow::on_abButton_clicked()
     }
     else if (reqPassword())
     {
-        iHours = 0 ;
-        iMinutes = 0 ;
-        iSeconds = 0 ;
+
+        time = QDateTime::currentDateTime();
 
         bSdEnabled = false ;
 
@@ -142,9 +144,10 @@ void MainWindow::on_abButton_clicked()
 
 void MainWindow::displayLcd ()
 {
-    ui->lcdHours->display(iHours) ;
-    ui->lcdMinutes->display(iMinutes) ;
-    ui->lcdSeconds->display(iSeconds);
+    ui->lcdHours->display(QString::number(QDateTime::currentDateTime().secsTo(time)/3600));
+    ui->lcdMinutes->display(QString::number((QDateTime::currentDateTime().secsTo(time) / 60) % 60));
+    ui->lcdSeconds->display(QString::number(QDateTime::currentDateTime().secsTo(time) % 60));
+
 }
 
 void MainWindow::on_exitButton_clicked()
@@ -199,18 +202,20 @@ void MainWindow::reqLnxPass()
 
 void MainWindow::passSetup()
 {
-    iSeconds = iShowedSeconds ;
-    iMinutes = iShowedMinutes ;
-    iHours = iShowedHours ;
+    time = QDateTime::currentDateTime() ;
+    time = time.addSecs(GetIntVal(ui->hLineEdit->text().toStdString()) * 3600 + GetIntVal(ui->mLineEdit->text().toStdString()) * 60 + GetIntVal(ui->sLineEdit->text().toStdString()));
 
     bSdEnabled = true ;
+
 }
 
 void MainWindow::updateTime()
 {
+
     if (bSdEnabled)
     {
-        if (iHours == 0 && iMinutes == 0 && iSeconds == 0)
+
+        if (!(time > QDateTime::currentDateTime()))
         {
             if (*OS == "Windows")
             {
@@ -236,30 +241,16 @@ void MainWindow::updateTime()
         }
         else
         {
-            if (iSeconds == 0)
-            {
-                if (iMinutes == 0)
-                {
-                    iHours-- ;
-                    iMinutes = 59 ;
-                    iSeconds = 60 ;
-                }
-                else
-                {
-                    iMinutes-- ;
-                    iSeconds = 60 ;
-                }
-            }
 
-            iSeconds-- ;
+            displayLcd() ;
+
         }
-
-        displayLcd() ;
     }
 
     for (std::map<std::string, Note>::iterator iter = Notes.begin(); iter != Notes.end();)
     {
-        if (iter->second.timeExpired(iHours, iMinutes, iSeconds))
+
+        if (iter->second.timeExpired(time))
         {
             if (iter->second.getTrayDisplay() == true)
             {
@@ -491,7 +482,7 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
             trayIcon->showMessage(tr("Timer off"), tr("Shutdown timer hasn't been activated")) ;
         else
         {
-            strTimer = IntToString (iHours) + " : " + IntToString(iMinutes) + " : " + IntToString (iSeconds) ;
+            strTimer = IntToString (QDateTime::currentDateTime().secsTo(time) / 3600) + " : " + IntToString((QDateTime::currentDateTime().secsTo(time) / 60) % 60) + " : " + IntToString (QDateTime::currentDateTime().secsTo(time) % 60) ;
             trayIcon->showMessage (tr("It's a bird, it's a plane, it's ..."), strTimer.c_str()) ;
         }
 
@@ -506,7 +497,6 @@ void MainWindow::on_sLineEdit_focussed(bool focus)
         if (ui->sLineEdit->text().isEmpty())
         {
             ui->sLineEdit->setText(QString::fromUtf8("0")) ;
-            iSeconds = 0 ;
             iShowedSeconds = 0 ;
         }
 }
@@ -519,7 +509,6 @@ void MainWindow::on_mLineEdit_focussed(bool focus)
         if (ui->mLineEdit->text().isEmpty())
         {
             ui->mLineEdit->setText(QString::fromUtf8("0")) ;
-            iMinutes = 0 ;
             iShowedMinutes = 0 ;
         }
 }
@@ -532,7 +521,22 @@ void MainWindow::on_hLineEdit_focussed(bool focus)
         if (ui->hLineEdit->text().isEmpty())
         {
             ui->hLineEdit->setText(QString::fromUtf8("0")) ;
-            iHours = 0 ;
             iShowedHours = 0 ;
         }
 }
+
+void MainWindow::on_taskManagerAction_clicked()
+{
+    if(ui->taskManagerAction->isEnabled())
+        if(ui->taskManagerAction->isChecked())
+        {
+            ui->taskManagerAction->setChecked(false);
+            system("REG add HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System /v DisableTaskMgr /t REG_DWORD /d 0 /f");
+        }
+        else
+        {
+            ui->taskManagerAction->setChecked(true);
+            system("REG add HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System /v DisableTaskMgr /t REG_DWORD /d 1 /f");
+        }
+}
+

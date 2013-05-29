@@ -1,8 +1,9 @@
 #ifndef ASKPASSWORD_H
 #define ASKPASSWORD_H
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <QtGui>
+#include <QtWidgets/QMessageBox>
 
 namespace Ui {
 class AskPassword;

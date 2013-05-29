@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>323</height>
+    <width>399</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>View Note</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>331</width>
-     <height>291</height>
+     <width>363</width>
+     <height>306</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -242,6 +242,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="dateButton">
+        <property name="text">
+         <string>Select Date</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clearButton">
+        <property name="text">
+         <string>Clear Date</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="closeButton">
         <property name="text">
          <string>&amp;Close</string>
@@ -252,11 +266,6 @@
     </item>
    </layout>
   </widget>
-  <zorder>layoutWidget</zorder>
-  <zorder>label_6</zorder>
-  <zorder>trayCheckBox</zorder>
-  <zorder>windowCheckBox</zorder>
-  <zorder></zorder>
  </widget>
  <customwidgets>
   <customwidget>

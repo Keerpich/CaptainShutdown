@@ -8,6 +8,8 @@
 #include <QMenu>
 #include <QCloseEvent>
 #include <QProcess>
+#include <QSystemTrayIcon>
+#include <QDateTime>
 
 #include <stdio.h>
 //#include <unistd.h>
@@ -68,6 +70,8 @@ private slots:
 
     void on_addNoteAction_triggered() ;
 
+    void on_taskManagerAction_clicked() ;
+
     void trayIconClicked (QSystemTrayIcon::ActivationReason) ;
 
 public slots:
@@ -110,6 +114,8 @@ private:
     std::string strTimer ;
 
     QTimer *timer ;
+
+    QDateTime time;
 
     bool bReqPassword ;
     bool bSdEnabled ;
