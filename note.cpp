@@ -158,4 +158,12 @@ std::istream& operator>> (std::istream& in, Note& note)
 
 }
 
+void Note::playWav()
+{
+    QSoundEffect wav;
+    wav.setSource(QUrl::fromLocalFile("bell.wav"));
+    wav.setLoopCount(1);
+    wav.setVolume(1.0f);
+    wav.play();
+}
 

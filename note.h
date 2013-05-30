@@ -4,6 +4,7 @@
 #include <QString>
 #include <QtGui>
 #include <QMessageBox>
+#include <QSoundEffect>
 
 #include <ostream>
 #include <istream>
@@ -38,6 +39,8 @@ public:
     void setWindowDisplay (bool WDMo) ;
     void setTitle (QString T) ;
     void setDetails (QString D) ;
+
+    void playWav();
 
 private:
     bool checkAgainstTime (const QDateTime checker) ;

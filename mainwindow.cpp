@@ -265,6 +265,7 @@ void MainWindow::updateTime()
                     show() ;
                 iter->second.displayNote() ;
             }
+            iter->second.playWav() ;
             Notes.erase(iter++) ;
         }
         else ++iter ;
