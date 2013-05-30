@@ -424,14 +424,6 @@ void MainWindow::loadNotes()
             continue;
         }*/
 
-        QMessageBox::about(this, "toLoad", "date: " + toLoad.getTime().toString() + "\n" +
-                           "mode: " + QString::number(toLoad.getMode()) + " \n" +
-                           "title: " + toLoad.getTitle() + "\n" +
-                           "details: " + toLoad.getDetails() + "\n" +
-                           "btraydisplay: " + QString::number(toLoad.getTrayDisplay()) + "\n" +
-                           "bwindowdisplay: " + QString::number(toLoad.getWindowDisplay()));
-
-
         Notes.insert( make_pair(toLoad.getTitle().toStdString(), toLoad) ) ;
     }
 }
