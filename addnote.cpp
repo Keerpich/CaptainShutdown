@@ -78,7 +78,7 @@ void AddNote::on_titleLineEdit_editingFinished()
         enableOK() ;
     }
 }
-void AddNote::on_detailsTextEdit_editingFinished()
+void AddNote::on_detailsTextEdit_textChanged()
 {
     newNote.setDetails(ui->detailsTextEdit->toPlainText());
 }

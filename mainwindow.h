@@ -12,6 +12,7 @@
 #include <QDateTime>
 
 #include <stdio.h>
+#include <fstream>
 //#include <unistd.h>
 
 #include "setpassword.h"
@@ -98,6 +99,8 @@ private:
     void createTrayIcon () ;
     void setIcon () ;
     void createMenus() ;
+    void saveNotes();
+    void loadNotes();
 
     std::map<std::string, Note> Notes ;
 

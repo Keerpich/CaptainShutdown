@@ -44,7 +44,7 @@ private slots:
     void on_windowCheckBox_stateChanged () ;
 
     void on_titleLineEdit_editingFinished () ;
-    void on_detailsTextEdit_editingFinished () ;
+    void on_detailsTextEdit_textChanged () ;
 
     void on_hLineEdit_editingFinished () ;
     void on_mLineEdit_editingFinished () ;

@@ -11,6 +11,8 @@ Add timer options :
 
 Add Notes (done)
 
+	-keep notes between sessions (done)
+
 Add sound:
 	-play sound at a specific time (like Note)
 	-play sound when a specific Note appears

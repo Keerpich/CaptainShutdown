@@ -1,5 +1,7 @@
 #include "note.h"
 
+#include <QDebug>
+
 Note::Note (QWidget *parent2) :
     parent(parent2)
 {
@@ -80,17 +82,17 @@ bool Note::timeExpired(QDateTime tmp)
 }
 
 
-const QDateTime Note::getTime()
+QDateTime Note::getTime() const
 {
     return time;
 }
 
-const QString Note::getDetails()
+QString Note::getDetails() const
 {
     return strDetails ;
 }
 
-const QString Note::getTitle()
+QString Note::getTitle() const
 {
     return strTitle ;
 }
@@ -126,3 +128,34 @@ void Note::setWindowDisplay(bool WDMo)
 {
     bWindowDisplay = WDMo ;
 }
+
+std::ostream& operator<< (std::ostream& out, const Note& note)
+{
+    out << note.getTime().toString().toStdString() << endl;
+    out << note.getMode() << endl;
+    out << note.getTitle().toStdString() << endl;
+    out << note.getDetails().toStdString() << endl;
+    out << note.getTrayDisplay() << endl ;
+    out << note.getWindowDisplay() << endl;
+
+    return out;
+}
+
+std::istream& operator>> (std::istream& in, Note& note)
+{
+    string title, date, details;
+    string ext;
+
+    getline (in, ext);
+    getline (in, date); note.time = QDateTime::fromString(QString::fromUtf8(date.c_str()));
+    in >> note.iMode ; getline (in, ext);
+    getline(in, title); note.strTitle = QString::fromUtf8(title.c_str());
+    getline(in, details); note.strDetails = QString::fromUtf8(details.c_str());
+    in >> note.bTrayDisplay;
+    in >> note.bWindowDisplay;
+
+    return in;
+
+}
+
+

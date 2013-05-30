@@ -40,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     iShowedMinutes = 0 ;
     iShowedHours = 0 ;
 
+    loadNotes();
+
     timer = new QTimer (this) ;
     connect (timer, SIGNAL (timeout()), this, SLOT (updateTime())) ;
     timer->start (1000) ;
@@ -392,6 +394,48 @@ void MainWindow::slAskAccepted()
     bReqPassword = true ;
 }
 
+void MainWindow::saveNotes()
+{
+    ofstream myfile("notes.txt");
+
+    myfile << Notes.size() << endl;
+
+    for (std::map<std::string, Note>::iterator iter = Notes.begin(); iter != Notes.end();)
+    {
+        myfile << iter->second;
+        iter++;
+    }
+}
+
+void MainWindow::loadNotes()
+{
+    std::ifstream myfile("notes.txt");
+    Note toLoad;
+    int size;
+
+    myfile >> size;
+
+    for (int i = 0; i < size; i++)
+    {
+        myfile >> toLoad;
+
+        /*if (!(toLoad.getTime() > QDateTime::currentDateTime()))
+        {
+            continue;
+        }*/
+
+        QMessageBox::about(this, "toLoad", "date: " + toLoad.getTime().toString() + "\n" +
+                           "mode: " + QString::number(toLoad.getMode()) + " \n" +
+                           "title: " + toLoad.getTitle() + "\n" +
+                           "details: " + toLoad.getDetails() + "\n" +
+                           "btraydisplay: " + QString::number(toLoad.getTrayDisplay()) + "\n" +
+                           "bwindowdisplay: " + QString::number(toLoad.getWindowDisplay()));
+
+
+        Notes.insert( make_pair(toLoad.getTitle().toStdString(), toLoad) ) ;
+    }
+}
+
 void MainWindow::slAskRejcted()
 {
     bReqPassword = false ;
@@ -440,10 +484,17 @@ void MainWindow::on_addNoteAction_triggered()
 void MainWindow::toQuit()
 {
     if (setPassword.isEmpty())
+    {
+        saveNotes();
         qApp->quit();
+    }
     else
         if (reqPassword())
+        {
+            saveNotes();
             qApp->quit();
+        }
+
 }
 
 void MainWindow::createActions()
