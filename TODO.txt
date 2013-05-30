@@ -12,6 +12,7 @@ Add timer options :
 Add Notes (done)
 
 	-keep notes between sessions (done)
+	-fix display hlineedit,mlineedit,slineedit when selecting existing note 
 
 Add sound:
 	-play sound at a specific time (like Note)
