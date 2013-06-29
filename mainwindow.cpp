@@ -23,10 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->menubar->setVisible(true);
 
-    if(*OS == "Windows")
+    /*if(*OS == "Windows")
     {
         ui->taskManagerAction->setEnabled(true);
-    }
+    }*/
 
     trayIcon->show();
 
@@ -49,9 +49,16 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {   
     delete ui;
+	ui = NULL;
     delete trayIcon;
+	trayIcon = NULL;
     delete trayIconMenu;
+	trayIconMenu = NULL;
     delete open;
+	open = NULL;
+	delete timer;
+	timer = NULL;
+
 
 }
 
@@ -256,6 +263,8 @@ void MainWindow::updateTime()
         {
             if (iter->second.getTrayDisplay() == true)
             {
+                if (iter->second.isSound())
+                    iter->second.playWav();
                 trayIcon->showMessage(QString::fromUtf8(iter->second.getTitle().toStdString().c_str()),
                                       QString::fromUtf8(iter->second.getDetails().toStdString().c_str())) ;
             }
@@ -265,7 +274,6 @@ void MainWindow::updateTime()
                     show() ;
                 iter->second.displayNote() ;
             }
-            iter->second.playWav() ;
             Notes.erase(iter++) ;
         }
         else ++iter ;
@@ -280,7 +288,7 @@ std::string MainWindow::IntToString(int IntValue)
     MyBuff = new char[100] ;
 
     memset (MyBuff, '\0', 100) ;
-    snprintf(MyBuff, sizeof(MyBuff), "%d", IntValue);
+    _snprintf(MyBuff, sizeof(MyBuff), "%d", IntValue);
     //itoa (IntValue, MyBuff, 10) ;
 
     strRetVal = MyBuff ;
@@ -329,7 +337,7 @@ void MainWindow::on_resetAction_triggered()
 void MainWindow::on_aboutCptAction_triggered()
 {
     QMessageBox::about(this, tr("About Captain Shutdown"),
-                       tr("<h2>Captain Shutdown 2.6</h2>"
+                       tr("<h2>Captain Shutdown 3.0</h2>"
                        "<p>Created by Radu Daniel Alexandru"
                        "<p>danyhk94@gmail.com"
                         "<p><a href = http://tinyprojectz.blogspot.com>My Blog</a>"
@@ -420,10 +428,12 @@ void MainWindow::loadNotes()
     {
         myfile >> toLoad;
 
-        /*if (!(toLoad.getTime() > QDateTime::currentDateTime()))
+        if (!(toLoad.getTime() > QDateTime::currentDateTime()))
         {
             continue;
-        }*/
+        }
+
+        //QMessageBox::about(this, "da", QString::number(toLoad.isSound()) + QString::number(toLoad.getTrayDisplay()) + QString::number(toLoad.getWindowDisplay()));
 
         Notes.insert( make_pair(toLoad.getTitle().toStdString(), toLoad) ) ;
     }
@@ -569,18 +579,7 @@ void MainWindow::on_hLineEdit_focussed(bool focus)
         }
 }
 
-void MainWindow::on_taskManagerAction_clicked()
+void MainWindow::on_changeSound_triggered()
 {
-    if(ui->taskManagerAction->isEnabled())
-        if(ui->taskManagerAction->isChecked())
-        {
-            ui->taskManagerAction->setChecked(false);
-            system("REG add HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System /v DisableTaskMgr /t REG_DWORD /d 0 /f");
-        }
-        else
-        {
-            ui->taskManagerAction->setChecked(true);
-            system("REG add HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System /v DisableTaskMgr /t REG_DWORD /d 1 /f");
-        }
+    QMessageBox::about(this, tr("How to change sound"), tr("You can change the sound created by notes that pop by chaning the \"bell.wav\" file to another one with the same name")) ;
 }
-

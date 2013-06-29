@@ -64,6 +64,8 @@ private slots:
 
     void on_deleteButton_clicked() ;
 
+    void on_soundBox_stateChanged () ;
+
     void on_dateButton_clicked();
     void on_clearButton_clicked();
 };

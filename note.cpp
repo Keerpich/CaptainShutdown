@@ -5,6 +5,9 @@
 Note::Note (QWidget *parent2) :
     parent(parent2)
 {
+    soundEn = false;
+	bWindowDisplay = false;
+	bTrayDisplay = false;
 }
 
 bool Note::checkAgainstTime(const QDateTime checker)
@@ -56,6 +59,11 @@ void Note::setDetails (QString D)
 
 void Note::displayNote()
 {
+    if(isSound())
+    {
+        playWav();
+    }
+
     QMessageBox::information(parent ,strTitle,
                              strDetails,
                                 QMessageBox::Ok) ;
@@ -105,6 +113,7 @@ Note Note::operator =(Note &other)
     this->setDetails(other.getDetails()) ;
     this->setTrayDisplay(other.getTrayDisplay()) ;
     this->setWindowDisplay(other.getWindowDisplay()) ;
+	this->setSound(other.isSound());
 
     return *this ;
 }
@@ -131,12 +140,13 @@ void Note::setWindowDisplay(bool WDMo)
 
 std::ostream& operator<< (std::ostream& out, const Note& note)
 {
-    out << note.getTime().toString().toStdString() << endl;
-    out << note.getMode() << endl;
-    out << note.getTitle().toStdString() << endl;
-    out << note.getDetails().toStdString() << endl;
-    out << note.getTrayDisplay() << endl ;
-    out << note.getWindowDisplay() << endl;
+    out << note.time.toString().toStdString() << endl;
+	out << note.iMode << endl;
+    out << note.strDetails.toStdString() << endl;
+    out << note.strDetails.toStdString() << endl;
+    out << note.bTrayDisplay << endl ;
+    out << note.bWindowDisplay << endl;
+    out << note.soundEn << endl;
 
     return out;
 }
@@ -153,6 +163,7 @@ std::istream& operator>> (std::istream& in, Note& note)
     getline(in, details); note.strDetails = QString::fromUtf8(details.c_str());
     in >> note.bTrayDisplay;
     in >> note.bWindowDisplay;
+    in >> note.soundEn;
 
     return in;
 
@@ -160,10 +171,15 @@ std::istream& operator>> (std::istream& in, Note& note)
 
 void Note::playWav()
 {
-    QSoundEffect wav;
-    wav.setSource(QUrl::fromLocalFile("bell.wav"));
-    wav.setLoopCount(1);
-    wav.setVolume(1.0f);
-    wav.play();
+    QSound::play("bell.wav");
 }
 
+void Note::setSound(bool set)
+{
+    soundEn = set;
+}
+
+bool Note::isSound() const
+{
+    return soundEn;
+}

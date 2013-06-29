@@ -11,7 +11,7 @@
 #include <QSystemTrayIcon>
 #include <QDateTime>
 
-#include <stdio.h>
+#include <cstdio>
 #include <fstream>
 //#include <unistd.h>
 
@@ -64,14 +64,13 @@ private slots:
 
     void on_aboutCptAction_triggered() ;
     void on_aboutQtAction_triggered() ;
+    void on_changeSound_triggered() ;
 
     void on_setPAction_triggered() ;
     void on_editPAction_triggered() ;
     void on_removePAction_triggered() ;
 
     void on_addNoteAction_triggered() ;
-
-    void on_taskManagerAction_clicked() ;
 
     void trayIconClicked (QSystemTrayIcon::ActivationReason) ;
 

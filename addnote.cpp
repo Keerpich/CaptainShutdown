@@ -41,6 +41,7 @@ void AddNote::enableOK()
     if (((noteDate.toTime_t() == 0) && (ui->hLineEdit->text().isEmpty()
             || ui->mLineEdit->text().isEmpty()
             || ui->sLineEdit->text().isEmpty()))
+
             || ui->titleLineEdit->text().isEmpty()
             || (ui->trayCheckBox->isChecked() == false && ui->windowCheckBox->isChecked() == false))
         ui->okButton->setEnabled(false) ;
@@ -145,15 +146,32 @@ void AddNote::on_comboBox_currentIndexChanged(const QString &textBox)
 
     else
     {
+
         newNote = vNote->find(ui->comboBox->currentText().toStdString())->second ;
+
+
+        char hStr[21];
+        long long hqint = QDateTime::currentDateTime().secsTo(newNote.getTime()) / 3600;
+        sprintf(hStr, "%lld", hqint);
+
+        char mStr[21];
+        long long mqint = (QDateTime::currentDateTime().secsTo(newNote.getTime()) / 60) % 60 ;
+        sprintf(mStr, "%lld", mqint);
+
+        char sStr[21];
+        long long sqint = QDateTime::currentDateTime().secsTo(newNote.getTime()) % 60 ;
+        sprintf(sStr,"%lld", sqint);
 
         ui->titleLineEdit->setText(newNote.getTitle()) ;
         ui->detailsTextEdit->setText(newNote.getDetails()) ;
-        ui->hLineEdit->setText(QString::number(QDateTime::currentDateTime().secsTo(noteDate) / 3600)) ;
-        ui->mLineEdit->setText(QString::number((QDateTime::currentDateTime().secsTo(noteDate) / 60) % 60)) ;
-        ui->sLineEdit->setText(QString::number((QDateTime::currentDateTime().secsTo(noteDate) % 60))) ;
+        ui->hLineEdit->setText(QString::fromUtf8(hStr)) ;
+        ui->mLineEdit->setText(QString::fromUtf8(mStr)) ;
+        ui->sLineEdit->setText(QString::fromUtf8(sStr)) ;
         ui->beforeSdRadio->setChecked(newNote.getMode() == BEFORE_SHUT) ;
         ui->fromSetRadio->setChecked(newNote.getMode() == AT_TIME) ;
+        ui->windowCheckBox->setChecked(newNote.getWindowDisplay());
+        ui->trayCheckBox->setChecked(newNote.getTrayDisplay());
+        ui->soundBox->setChecked(newNote.isSound()) ;
 
 
 
@@ -196,7 +214,7 @@ std::string AddNote::IntToString(int IntValue)
     MyBuff = new char[100] ;
 
     memset (MyBuff, '\0', 100) ;
-    snprintf(MyBuff, sizeof(MyBuff), "%d", IntValue);
+    _snprintf(MyBuff, sizeof(MyBuff), "%d", IntValue);
     //itoa (IntValue, MyBuff, 10) ;
 
     strRetVal = MyBuff ;
@@ -303,4 +321,17 @@ void AddNote::on_clearButton_clicked()
 {
     noteDate.setTime_t(0);
     ui->beforeSdRadio->setDisabled(false);
+}
+
+void AddNote::on_soundBox_stateChanged()
+{
+    if (ui->soundBox->isChecked())
+	{
+        newNote.setSound(true);
+	}
+    else 
+	{
+		newNote.setSound(false);
+	}
+
 }

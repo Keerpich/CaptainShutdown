@@ -204,7 +204,7 @@
      <x>0</x>
      <y>0</y>
      <width>386</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -220,7 +220,6 @@
     <addaction name="resetAction"/>
     <addaction name="separator"/>
     <addaction name="exitAction"/>
-    <addaction name="taskManagerAction"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="tearOffEnabled">
@@ -240,6 +239,7 @@
      <addaction name="aboutQtAction"/>
     </widget>
     <addaction name="menuAbout"/>
+    <addaction name="changeSound"/>
    </widget>
    <widget class="QMenu" name="menuPassword">
     <property name="title">
@@ -368,7 +368,7 @@
     <string>Edit/Remove Note</string>
    </property>
   </action>
-  <action name="taskManagerAction">
+  <action name="action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -380,6 +380,11 @@
    </property>
    <property name="shortcut">
     <string>T</string>
+   </property>
+  </action>
+  <action name="changeSound">
+   <property name="text">
+    <string>Change sound</string>
    </property>
   </action>
  </widget>

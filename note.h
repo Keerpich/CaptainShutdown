@@ -4,7 +4,7 @@
 #include <QString>
 #include <QtGui>
 #include <QMessageBox>
-#include <QSoundEffect>
+#include <QSound>
 
 #include <ostream>
 #include <istream>
@@ -42,6 +42,9 @@ public:
 
     void playWav();
 
+    void setSound (bool set);
+    bool isSound () const ;
+
 private:
     bool checkAgainstTime (const QDateTime checker) ;
     bool elapseTime () ;
@@ -51,6 +54,8 @@ private:
     QDateTime time;
 
     qint64 toAdd;
+
+    bool soundEn ;
 
     int iMode ;
     bool bTrayDisplay ;

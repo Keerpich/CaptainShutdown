@@ -6,6 +6,7 @@
 
 QT       += core gui widgets
 QT       += multimedia
+QT       -= network
 
 TARGET = CptShutWin
 TEMPLATE = app

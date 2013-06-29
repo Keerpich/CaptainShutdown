@@ -199,6 +199,13 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
+         <widget class="QCheckBox" name="soundBox">
+          <property name="text">
+           <string>Sound</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QCheckBox" name="trayCheckBox">
           <property name="text">
            <string>Tray Popup</string>
